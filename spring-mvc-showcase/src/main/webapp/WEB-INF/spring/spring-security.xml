@@ -1,0 +1,34 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<http auto-config="true">
+		<intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**" access="ROLE_USER" />
+		<form-login login-page="/login" default-target-url="/"
+			authentication-failure-url="/loginError"
+			authentication-success-handler-ref="ajaxAuthenticationSuccessHandler" />
+		<logout success-handler-ref="logoutSuccessHandler" />
+
+	</http>
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="mkyong" password="123456" authorities="ROLE_USER" />
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+
+	<beans:bean id="logoutSuccessHandler"
+		class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/login" />
+	</beans:bean>
+	
+	<beans:bean id="ajaxAuthenticationSuccessHandler" class="org.springframework.samples.mvc.security.config.AjaxAuthenticationSuccessHandler">
+    <beans:property name="defaultTargetUrl" value="/login"/>
+</beans:bean>
+</beans:beans>
